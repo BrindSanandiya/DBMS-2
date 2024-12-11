@@ -10,14 +10,14 @@ select distinct genre from SONGS
 --Find top 2 albums released before 2010.
 select top 2 * from Albums where Release_year < 2010
 
---Insert Data into the Songs Table. (1245, ‘Zaroor’, 2.55, ‘Feel good’, 1005)
+--Insert Data into the Songs Table. (1245, â€˜Zaroorâ€™, 2.55, â€˜Feel goodâ€™, 1005)
 insert into SONGS values
 (1245,'Zaroor', 2.55, 'Feel good', 1005)
 
---Change the Genre of the song ‘Zaroor’ to ‘Happy’
+--Change the Genre of the song â€˜Zaroorâ€™ to â€˜Happyâ€™
 update SONGS set Genre = 'Happy' where Song_title = 'zaroor'
 
---Delete an Artist ‘Ed Sheeran’
+--Delete an Artist â€˜Ed Sheeranâ€™
 delete from Artists where Artist_name = 'Ed sheeran'
 select * from Artists
 
@@ -33,7 +33,7 @@ select Song_title from SONGS where Song_title like '%everybody%'
 --Display Artist Name in Uppercase.
 select upper(artist_name) from Artists
 
---Find the Square Root of the Duration of a Song ‘Good Luck’
+--Find the Square Root of the Duration of a Song â€˜Good Luckâ€™
 select SQRT(duration) from songs where Song_title = 'good luck'
 
 --Find Current Date.
@@ -48,7 +48,7 @@ SELECT ALBUM_ID,COUNT(SONG_ID) AS NOOFSONGS FROM SONGS GROUP BY ALBUM_ID HAVING 
 --Retrieve all songs from the album 'Album1'. (using Subquery)
 SELECT SONG_TITLE FROM SONGS WHERE ALBUM_ID IN(SELECT ALBUM_ID FROM ALBUMS WHERE ALBUM_TITLE='ALBUM1');
 
---Retrieve all albums name from the artist ‘Aparshakti Khurana’ (using Subquery)
+--Retrieve all albums name from the artist â€˜Aparshakti Khuranaâ€™ (using Subquery)
 SELECT ALBUM_TITLE FROM ALBUMS WHERE ARTIST_ID IN(SELECT ARTIST_ID FROM ARTISTS WHERE ARTIST_NAME='Aparshakti Khurana');
 
 --Retrieve all the song titles with its album title.
@@ -62,10 +62,10 @@ FROM ALBUMS JOIN SONGS
 ON ALBUMS.ALBUM_ID=SONGS.ALBUM_ID
 WHERE RELEASE_YEAR=2020;
 
---Create a view called ‘Fav_Songs’ from the songs table having songs with song_id 101-105.
+--Create a view called â€˜Fav_Songsâ€™ from the songs table having songs with song_id 101-105.
 CREATE VIEW FAV_SONGS AS SELECT SONG_ID,SONG_TITLE FROM SONGS WHERE SONG_ID BETWEEN 101 AND 105;
 
---19. Update a song name to ‘Jannat’ of song having song_id 101 in Fav_Songs view.
+--19. Update a song name to â€˜Jannatâ€™ of song having song_id 101 in Fav_Songs view.
 UPDATE FAV_SONGS SET SONG_TITLE='JANNAT' WHERE SONG_ID=101;
 
 --20. Find all artists who have released an album in 2020.
@@ -187,7 +187,7 @@ truncate table person
 
 
 --PartA--
---Department, Designation & Person Table’s INSERT, UPDATE & DELETE Procedures.
+--Department, Designation & Person Tableâ€™s INSERT, UPDATE & DELETE Procedures.
 create procedure pr_department_ins
 	@departmentID int,
 	@departmentName varchar(50)
@@ -251,26 +251,136 @@ exec pr_person_ins'Bhoomi', 'Patel', 39000.00, '2014-02-20', 1, 13
 exec pr_person_ins'Rohit', 'Rajgor', 17000.00, '1990-07-23', 2, 15
 exec pr_person_ins'Priya', 'Mehta', 25000.00, '1990-10-18', 2, NULL
 exec pr_person_ins'Neha', 'Trivedi', 18000.00, '2014-02-20', 3, 15
+
+--
+
+create procedure pr_person_upd
+	@Salary decimal(8,2),
+	@Firstname varchar(50)
+as 
+begin
+	update Person
+	set Salary = @Salary
+	where FirstName = @Firstname
+end
+
+exec pr_person_upd 30000,'hardik'
+
+--
+
+create procedure pr_dept_upd
+	@departmentid int,
+	@departmentname varchar(50)
+as 
+begin
+	update Department
+	set DepartmentID = @departmentid
+	where DepartmentName = @departmentname
+end
+
+exec pr_dept_upd 6,'HR'
+
+--
+
+create procedure pr_dsgn_upd
+	@designationid int,
+	@designationname varchar(50)
+as 
+begin
+	update Designation
+	set DesignationID = @designationid
+	where DesignationName = @designationname
+end
+
+exec pr_dsgn_upd 30,'clerk'
+--
+select * from person
+select * from Designation
+select * from Department
+--
+
+create procedure pr_person_dlt
+	@firstname varchar(50)
+as
+begin
+	delete from Person
+	where FirstName = @firstname
+end
+
+--
+
+create procedure pr_dept_dlt
+	@departmentid int
+as
+begin
+	delete from Department
+	where DepartmentID = @departmentid
+end
+
+--
+
+create procedure pr_dsgn_dlt
+	@designationid int
+as
+begin
+	delete from Designation
+	where designationid = @designationid
+end
+
 	--------
 
 
---Department, Designation & Person Table’s SELECTBYPRIMARYKEY
+--Department, Designation & Person Tableâ€™s SELECTBYPRIMARYKEY
+create procedure pr_department_spk
+	@departmentid int
+as 
+begin
+	select * from Department
+	where DepartmentID = @departmentid
+end
 
+exec pr_department_spk 2
 
---Department, Designation & Person Table’s (If foreign key is available then do write join and take columns on select list)
+--
+
+create procedure pr_person_spk
+	@personid int
+as 
+begin
+	select * from Person
+	where PersonID = @personid
+end
+
+exec pr_person_spk 2
+
+--
+
+create procedure pr_designation_spk
+	@designationid int
+as 
+begin
+	select * from Designation
+	where DesignationID = @Designationid
+end
+exec pr_designation_spk 30 
 
 
 --Create a Procedure that shows details of the first 3 persons.
 
+create procedure pr_persondetail_t3
+as 
+begin
+	select top 3 * from person
+end
 
-
+exec pr_persondetail_t3
 
 ----PartB----
 
 
 --Create a Procedure that takes the department name as input and returns a table with all workers working in that department.
 
---Create Procedure that takes department name & designation name as input and returns a table with worker’s first name, salary, joining date & department name.
+--Create Procedure that takes department name & designation name as input and returns a table with workerâ€™s first name, salary, joining date & department name.
 
 --Create a Procedure that takes the first name as an input parameter and display all the details of the worker with their department & designation name.
 
@@ -296,3 +406,146 @@ exec pr_person_ins'Neha', 'Trivedi', 18000.00, '2014-02-20', 3, 15
 --Create a procedure to retrieve the details of workers in departments where the average salary is above 12000.
 
 
+
+----------------------------------------------------
+
+
+--------LAB-3---------
+
+CREATE TABLE Departments (
+ DepartmentID INT PRIMARY KEY,
+ DepartmentName VARCHAR(100) NOT NULL UNIQUE,
+ ManagerID INT NOT NULL,
+ Location VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Employee (
+ EmployeeID INT PRIMARY KEY,
+ FirstName VARCHAR(100) NOT NULL,
+ LastName VARCHAR(100) NOT NULL,
+ DoB DATETIME NOT NULL,
+ Gender VARCHAR(50) NOT NULL,
+ HireDate DATETIME NOT NULL,
+ DepartmentID INT NOT NULL,
+ Salary DECIMAL(10, 2) NOT NULL,
+ FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID)
+);
+
+-- Create Projects Table
+
+CREATE TABLE Projects (
+ ProjectID INT PRIMARY KEY,
+ ProjectName VARCHAR(100) NOT NULL,
+ StartDate DATETIME NOT NULL,
+ EndDate DATETIME NOT NULL,
+ DepartmentID INT NOT NULL,
+ FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID)
+);
+
+INSERT INTO Departments (DepartmentID, DepartmentName, ManagerID, Location) VALUES
+ (1, 'IT', 101, 'New York'),
+ (2, 'HR', 102, 'San Francisco'),
+ (3, 'Finance', 103, 'Los Angeles'),
+ (4, 'Admin', 104, 'Chicago'),
+ (5, 'Marketing', 105, 'Miami');
+
+INSERT INTO Employee (EmployeeID, FirstName, LastName, DoB, Gender, HireDate, DepartmentID,Salary) VALUES
+ (101, 'John', 'Doe', '1985-04-12', 'Male', '2010-06-15', 1, 75000.00),
+ (102, 'Jane', 'Smith', '1990-08-24', 'Female', '2015-03-10', 2, 60000.00),
+ (103, 'Robert', 'Brown', '1982-12-05', 'Male', '2008-09-25', 3, 82000.00),
+ (104, 'Emily', 'Davis', '1988-11-11', 'Female', '2012-07-18', 4, 58000.00),
+ (105, 'Michael', 'Wilson', '1992-02-02', 'Male', '2018-11-30', 5, 67000.00);
+
+INSERT INTO Projects (ProjectID, ProjectName, StartDate, EndDate, DepartmentID) VALUES
+ (201, 'Project Alpha', '2022-01-01', '2022-12-31', 1),
+ (202, 'Project Beta', '2023-03-15', '2024-03-14', 2),
+ (203, 'Project Gamma', '2021-06-01', '2022-05-31', 3),
+ (204, 'Project Delta', '2020-10-10', '2021-10-09', 4),
+ (205, 'Project Epsilon', '2024-04-01', '2025-03-31', 5);
+
+
+ ----PART A ----
+
+--Create Stored Procedure for Employee table As User enters either First Name or Last Name and based on this you must give EmployeeID, DOB, Gender & Hiredate.
+create procedure pr_printemp
+	@firstname varchar(50) null,
+	@lastname varchar(50) null
+as
+begin
+	select EmployeeId, doB, Gender, hiredate 
+	from employee 
+	where (firstname = @firstname) or (lastname = @lastname)
+end
+
+exec pr_printemp 'john',null
+
+--Create a Procedure that will accept Department Name and based on that gives employees list who belongs to that department. 
+
+create procedure pr_emplist
+	@departmentname varchar(50) null
+as
+begin 
+	select * from Employee p join Departments d 
+	on p.DepartmentID = d.DepartmentID
+	where d.DepartmentName = @departmentname
+end
+drop procedure pr_emplist
+
+exec pr_emplist 'HR'
+
+--Create a Procedure that accepts Project Name & Department Name and based on that you must give all the project related details. 
+
+create procedure pr_projectdetails
+	@projectname varchar(50) null,
+	@departmentname varchar(50) null
+as
+begin
+	select * from Projects p join departments d
+	on p.departmentid = d.departmentid
+	where (projectname=@projectname) and (departmentname = @departmentname)
+end
+
+exec pr_projectdetails 'Project beta','hr'
+
+--Create a procedure that will accepts any integer and if salary is between provided integer, then those employee list comes in output.
+
+create procedure pr_printsal
+	@integer1 int,
+	@integer2 int
+as
+begin
+	select salary from employee
+	where salary between @integer1 and @integer2
+END
+
+exec pr_printsal 50000,70000
+
+--Create a Procedure that will accepts a date and gives all the employees who all are hired on that date. 
+
+create procedure pr_showhdate
+	@date date
+as
+begin
+	select * from employee 
+	where hiredate = @date
+end
+
+exec pr_showhdate '2008-09-25'
+
+
+---- PART B
+
+--Create a Procedure that accepts Genderâ€™s first letter only and based on that employee details will be served.
+
+create procedure pr_empgender
+	@gender varchar(5)
+as 
+begin 
+	select * from employee
+	where gender like '@gender%'
+end
+
+exec pr_empgender m
+
+--Create a Procedure that accepts First Name or Department Name as input and based on that employee data will come.
+--Create a procedure that will accepts location, if user enters a location any characters, then he/she will get all the departments with all data. 
